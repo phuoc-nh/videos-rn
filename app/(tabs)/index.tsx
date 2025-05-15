@@ -1,14 +1,22 @@
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
+import TrendingCard from "@/components/TrendingCard";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { getMovies } from "@/services/api";
+import { getTrendingMovies } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
 import { useRouter } from "expo-router";
 import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from "react-native";
 
 export default function Index() {
   const router = useRouter()
+
+  const {
+    data: trendingMovies,
+    loading: trendingLoading,
+    error: trendingError
+  } = useFetch(getTrendingMovies)
   const {
     data: movies,
     loading: moviesLoading,
@@ -60,6 +68,31 @@ export default function Index() {
             placeholder="Search for a movie"
           ></SearchBar>
         </View>
+
+
+        {trendingMovies && trendingMovies.length > 0 && (
+          <View className="mt-10">
+            <Text className="text-white text-lg font-bold mb-5">
+              Trending movies
+            </Text>
+            <FlatList
+              className="mb-3 mt-3"
+              data={trendingMovies}
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              ItemSeparatorComponent={() => <View className="w-2"></View>}
+              renderItem={({ item, index }) => (
+                <TrendingCard
+                  movie={item}
+                  index={index}
+
+                >
+                </TrendingCard>
+              )}
+              keyExtractor={(item) => item.movie_id.toString()}
+            ></FlatList>
+          </View>
+        )}
 
         <Text className="text-lg text-white font-bold mb-5">Latest movies</Text>
         <FlatList

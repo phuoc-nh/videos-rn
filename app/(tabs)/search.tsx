@@ -26,9 +26,7 @@ export default function Search() {
 		const func = setTimeout(async () => {
 			if (search.trim()) {
 				loadMovies()
-				if (movies?.length > 0 && movies?.[0]) {
-					await updateSearchCount(search, movies[0])
-				}
+
 
 			} else {
 				reset()
@@ -39,6 +37,12 @@ export default function Search() {
 			clearTimeout(func)
 		}
 	}, [search])
+
+	useEffect(() => {
+		if (movies?.length > 0 && movies?.[0]) {
+			updateSearchCount(search, movies[0])
+		}
+	}, [movies])
 
 	return (
 		<View className='flex-1  bg-primary'>
