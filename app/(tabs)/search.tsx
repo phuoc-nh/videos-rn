@@ -3,6 +3,7 @@ import SearchBar from '@/components/SearchBar'
 import { icons } from '@/constants/icons'
 import { images } from '@/constants/images'
 import { getMovies } from '@/services/api'
+import { updateSearchCount } from '@/services/appwrite'
 import useFetch from '@/services/useFetch'
 import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
@@ -25,6 +26,10 @@ export default function Search() {
 		const func = setTimeout(async () => {
 			if (search.trim()) {
 				loadMovies()
+				if (movies?.length > 0 && movies?.[0]) {
+					await updateSearchCount(search, movies[0])
+				}
+
 			} else {
 				reset()
 			}
