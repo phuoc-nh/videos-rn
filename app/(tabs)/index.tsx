@@ -15,7 +15,6 @@ export default function Index() {
     error: moviesError
   } = useFetch(() => getMovies({ query: '' }))
 
-  console.log('movies', movies)
 
   if (moviesLoading) {
     return (

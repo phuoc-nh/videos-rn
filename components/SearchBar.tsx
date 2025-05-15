@@ -3,11 +3,13 @@ import React from 'react'
 import { Image, TextInput, View } from 'react-native'
 
 type Props = {
-	onPress: () => void
+	onPress?: () => void
+	value: string
 	placeholder: string
+	onChangeText?: (text: string) => void
 }
 
-export default function SearchBar({ onPress, placeholder }: Props) {
+export default function SearchBar({ onPress, placeholder, value, onChangeText }: Props) {
 
 
 	return (
@@ -21,8 +23,8 @@ export default function SearchBar({ onPress, placeholder }: Props) {
 			<TextInput
 				onPress={onPress}
 				placeholder={placeholder}
-				value=''
-				onChangeText={() => { }}
+				value={value}
+				onChangeText={onChangeText}
 				placeholderTextColor={'#a8b5db'}
 				className='flex-1 text-white ml-2'
 			></TextInput>
