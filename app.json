@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "movies-rn",
-    "slug": "movies-rn",
+    "name": "videos-rn",
+    "slug": "videos-rn",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "moviesrn",
+    "scheme": "videosrn",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

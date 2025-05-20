@@ -45,10 +45,10 @@ To learn more about developing your project with Expo, look at the following res
 
 ## Showcase 
 <!-- how to import image -->
-Popular movies  
-<img src="/assets/images/demo1.png" alt="All movies" width="300"/>
+Popular videos  
+<img src="/assets/images/demo1.png" alt="All videos" width="300"/>
 
-Search movies  
+Search videos  
 <img src="/assets/images/demo2.png" alt="Search page" width="300"/>
 
 Movie detail  
