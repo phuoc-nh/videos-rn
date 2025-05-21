@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { act, fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 import VideoScreen from '../VideoScreen';
 
@@ -26,11 +26,15 @@ describe('VideoScreen', () => {
 		expect(image.props.source.uri).toBe(thumbnailUri);
 	});
 
-	it('shows VideoView after pressing thumbnail', () => {
+	it('shows VideoView after pressing thumbnail', async () => {
 		const { getByTestId, queryByTestId } = render(<VideoScreen videoUri={videoUri} thumbnailUri={thumbnailUri} />);
 		const pressable = getByTestId('thumbnail-image');
 
-		fireEvent.press(pressable);
+		await act(async () => {
+			fireEvent.press(pressable);
+			await new Promise(res => setTimeout(res, 150));
+		});
+
 		expect(queryByTestId('thumbnail-image')).toBeNull();
 	});
 

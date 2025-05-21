@@ -2,8 +2,9 @@ import VideoScreen from '@/components/VideoScreen';
 import { formatDuration, pickVideo } from '@/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from "react";
-import { Alert, Button, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 export default function Upload() {
   const [title, onChangeTitle] = useState('');
   const [description, onChangeDescription] = useState('');
@@ -27,6 +28,7 @@ export default function Upload() {
 
   const handleVideo = async () => {
     const asset = await pickVideo();
+    await AsyncStorage.clear();
     if (!asset) return;
 
     setVideo(asset.uri);
@@ -80,49 +82,54 @@ export default function Upload() {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 ">
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          flexGrow: 1,
-        }}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20} // adjust if you have a header
       >
-        <Text className='text-2xl font-bold text-center mb-5'>Upload a Video</Text>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+        >
+          <Text className='text-2xl font-bold text-center mb-5'>Upload a Video</Text>
 
-        <VideoScreen videoUri={video} />
+          <VideoScreen videoUri={video} />
 
-        <View className='px-4'>
-          <Text className='text-sm'>Name: {videoMetadata?.filename}. Duration: {videoMetadata?.duration !== null ? formatDuration(videoMetadata.duration) : 'Loading...'}. Size: {(videoMetadata.size / (1024 * 1024)).toFixed(2)}MB</Text>
+          <View className='px-4'>
+            <Text className='text-sm'>Name: {videoMetadata?.filename}. Duration: {videoMetadata?.duration !== null ? formatDuration(videoMetadata.duration) : 'Loading...'}. Size: {(videoMetadata.size / (1024 * 1024)).toFixed(2)}MB</Text>
 
-          <Pressable
-            className="bg-blue-500 rounded-lg py-3 my-4 w-[30%] self-center"
-            onPress={handleVideo}
-          >
-            <Text className="text-white text-center font-bold">Change Video</Text>
-          </Pressable>
+            <Pressable
+              className="bg-blue-500 rounded-lg py-3 my-4 w-[30%] self-center"
+              onPress={handleVideo}
+            >
+              <Text className="text-white text-center font-bold">Change Video</Text>
+            </Pressable>
 
+            <Text className='text-sm font-bold'>Title</Text>
+            <TextInput
+              placeholder='Title'
+              onChangeText={onChangeTitle}
+              value={title}
+              className="border border-gray-300 rounded-lg px-4 py-2 mb-4 bg-white text-base"
+            />
 
+            <Text className='text-sm font-bold'>Description</Text>
+            <TextInput
+              placeholder='Description'
+              onChangeText={onChangeDescription}
+              value={description}
+              className="border border-gray-300 rounded-lg px-4 py-2 mb-4 bg-white text-base"
+            />
 
-          <Text className='text-sm font-bold'>Title</Text>
-          <TextInput
-            placeholder='Title'
-            onChangeText={onChangeTitle}
-            value={title}
-            className="border border-gray-300 rounded-lg px-4 py-2 mb-4 bg-white text-base"
-          />
-
-          <Text className='text-sm font-bold'>Description</Text>
-          <TextInput
-            placeholder='Description'
-            onChangeText={onChangeDescription}
-            value={description}
-            className="border border-gray-300 rounded-lg px-4 py-2 mb-4 bg-white text-base"
-          />
-
-          <Button disabled={!title || !description || !video} title="Submit" onPress={handleSubmit} />
-        </View>
-      </ScrollView>
+            <Button disabled={!title || !description || !video} title="Submit" onPress={handleSubmit} />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
 
   );
 }
+
 
