@@ -1,7 +1,6 @@
 import VideoScreen from '@/components/VideoScreen';
-import { formatDuration } from '@/utils';
+import { formatDuration, pickVideo } from '@/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from "react";
 import { Alert, Button, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,48 +25,22 @@ export default function Upload() {
   }, []);
 
 
-  const pickImage = async () => {
-    // Ask for permission
-    // await AsyncStorage.clear();
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission required', 'Go to settings and allow permission to access the media library');
-      return;
+  const handleVideo = async () => {
+    const asset = await pickVideo();
+    if (!asset) return;
+
+    setVideo(asset.uri);
+    const temp = {
+      filename: asset.fileName || 'Unknown',
+      duration: asset.duration || 0,
+      size: asset.fileSize || 0,
     }
+    setVideoMetadata(temp);
 
-    // go to setting app to allow permission
+    // Persist the video URI
+    await AsyncStorage.setItem('videoUri', asset.uri);
+    await AsyncStorage.setItem('metadata', JSON.stringify(temp));
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-
-
-    if (!result.canceled) {
-      const asset = result.assets[0];
-      const sizeMB = (asset.fileSize || 0) / (1024 * 1024);
-
-      if (sizeMB > 50) {
-        Alert.alert('File too large', 'Please select a video smaller than 50MB.');
-        return;
-      }
-
-      setVideo(asset.uri);
-      const temp = {
-        filename: asset.fileName || 'Unknown',
-        duration: asset.duration || 0,
-        size: asset.fileSize || 0,
-      }
-      setVideoMetadata(temp);
-
-      // Persist the video URI
-      await AsyncStorage.setItem('videoUri', asset.uri);
-      await AsyncStorage.setItem('metadata', JSON.stringify(temp));
-
-    }
   };
 
 
@@ -93,8 +66,8 @@ export default function Upload() {
           <Text className='text-2xl font-bold text-center mb-5'>Upload a Video</Text>
 
           <Pressable
-            className="bg-blue-500 rounded-lg py-3 mb-4"
-            onPress={pickImage}
+            className="bg-blue-500 rounded-lg py-3 mb-4 w-[30%] self-center"
+            onPress={handleVideo}
           >
             <Text className="text-white text-center font-bold">Select Video</Text>
           </Pressable>
@@ -107,7 +80,6 @@ export default function Upload() {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 ">
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -119,11 +91,11 @@ export default function Upload() {
         <VideoScreen videoUri={video} />
 
         <View className='px-4'>
-          <Text className='text-sm'>Name: {videoMetadata?.filename}. Duration: {videoMetadata?.duration !== null ? formatDuration(videoMetadata.duration) : 'Loading...'}min. Size: {(videoMetadata.size / (1024 * 1024)).toFixed(2)}MB</Text>
+          <Text className='text-sm'>Name: {videoMetadata?.filename}. Duration: {videoMetadata?.duration !== null ? formatDuration(videoMetadata.duration) : 'Loading...'}. Size: {(videoMetadata.size / (1024 * 1024)).toFixed(2)}MB</Text>
 
           <Pressable
-            className="bg-blue-500 rounded-lg py-3 my-4"
-            onPress={pickImage}
+            className="bg-blue-500 rounded-lg py-3 my-4 w-[30%] self-center"
+            onPress={handleVideo}
           >
             <Text className="text-white text-center font-bold">Change Video</Text>
           </Pressable>

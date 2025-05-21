@@ -4,13 +4,11 @@ import React from 'react'
 
 export default function _Layout() {
 	return (
-		<Tabs
-		>
+		<Tabs>
 			<Tabs.Screen name="index"
 				options={{
 					title: 'Home',
 					headerShown: false,
-
 				}} />
 		</Tabs>
 	)
